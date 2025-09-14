@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function SearchBar() {
   return (
-    <div className='flex justify-center items-center gap-4'>
+    <div className='flex justify-center items-center gap-4 pb-12'>
       {/* box serche */}
       <div className='relative w-2/5'>
         <input type="text" name="" id="" placeholder='Search for a place...' className='bg-[#262540] h-14 w-full rounded-[10px] px-10' />
