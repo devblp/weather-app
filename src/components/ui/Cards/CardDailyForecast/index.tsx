@@ -8,7 +8,7 @@ interface Props {
 
 export default function CardDailyForecast() {
   return (
-    <div className='flex flex-col justify-between items-center bg-[#262540] w-full h-[165px] rounded-[13px] mt-8 p-3'>
+    <div className='flex flex-col justify-between items-center bg-[#262540] w-[13%] max-sm:w-[30%] h-[165px] rounded-[13px] mt-8 p-3'>
       <div>
         <p className='text-[18px]'>Tue</p>
       </div>
