@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function DailyForecast() {
   return (
-    <div className='flex gap-4'>
+    <div className='flex flex-wrap gap-2.5'>
       <CardDailyForecast />
       <CardDailyForecast />
       <CardDailyForecast />
