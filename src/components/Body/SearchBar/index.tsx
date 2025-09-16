@@ -2,9 +2,9 @@ import React from 'react'
 
 export default function SearchBar() {
   return (
-    <div className='flex justify-center items-center gap-4 pb-12'>
+    <div className='flex max-sm:flex-col justify-center items-center gap-4 pb-12'>
       {/* box serche */}
-      <div className='relative w-2/5'>
+      <div className='relative w-2/5 max-lg:w-full'>
         <input type="text" name="" id="" placeholder='Search for a place...' className='bg-[#262540] h-14 w-full rounded-[10px] px-10' />
         <div className='absolute top-1/2 left-5 -translate-1/2'>
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" viewBox="0 0 256 256">
@@ -13,8 +13,8 @@ export default function SearchBar() {
         </div>
       </div>
       {/* serch btn */}
-      <div>
-        <button type="submit" className='bg-[#4658D9] w-24 h-14 rounded-[10px] active:bg-[#4658D9]/50 text-[15px]'>
+      <div className='max-sm:w-full'>
+        <button type="submit" className='bg-[#4658D9] w-24 max-sm:w-full h-14 rounded-[10px] active:bg-[#4658D9]/50 text-[15px]'>
           Search
         </button>
       </div>
