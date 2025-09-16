@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function DiethylForecast() {
   return (
-    <div className='flex gap-6'>
+    <div className='flex max-sm:flex-wrap gap-6 max-sm:gap-2 w-full'>
       <CardDiethylForecast />
       <CardDiethylForecast />
       <CardDiethylForecast />
