@@ -6,13 +6,13 @@ import DailyForecast from '../DailyForecast'
 
 export default function Layout() {
     return (
-        <div className='flex gap-10 w-full pb-20'>
-            <div className='w-[65%]'>
+        <div className='flex max-lg:flex-col gap-10 w-full pb-20'>
+            <div className='w-[65%] max-lg:w-full'>
                 <MainForecast />
                 <DiethylForecast />
                 <DailyForecast />
             </div>
-            <div className='w-[35%]'>
+            <div className='w-[35%] max-lg:w-full'>
                 <HourlyForecast />
             </div>
         </div>
