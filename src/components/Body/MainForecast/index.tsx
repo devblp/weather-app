@@ -1,20 +1,22 @@
-"use client"
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 interface IPdata {
   city: string;
   country_name: string
 }
 
-export default function MainForecast() {
-  const [IPdata, setIPdata] = useState<IPdata>()
-  useEffect(() => {
-    (async () => {
-      const res = await fetch("https://ipapi.co/json")
-      const data = await res.json()
-      setIPdata(data)
-    })()
-  }, [])
+interface Data {
+  current: {
+    apparent_temperature: string;
+  }
+}
+
+interface Props {
+  data: Data | undefined;
+  IPdata: IPdata | undefined;
+}
+
+export default function MainForecast({ data, IPdata }: Props) {
   return (
     <div className='flex max-sm:flex-col justify-between items-center bg-[#4658D9] rounded-[20px] w-full h-72 p-6'>
       <div className='flex max-sm:items-center flex-col gap-2'>
@@ -23,7 +25,7 @@ export default function MainForecast() {
       </div>
       <div className='flex max-sm:items-center items-center gap-5'>
         <img src="/Sunny.png" alt="" />
-        <p className='text-8xl '>20°</p>
+        <p className='text-[80px] font-bold'>{data?.current?.apparent_temperature}°</p>
       </div>
     </div>
   )

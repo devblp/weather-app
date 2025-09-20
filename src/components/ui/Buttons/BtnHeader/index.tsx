@@ -45,7 +45,7 @@ export default function BtnHeader() {
     ]
 
     return (
-        <div className='relative w-full h-fit'>
+        <div className='relative w-full h-fit z-50'>
             <button onClick={() => setOpen(!open)} className='flex justify-center items-center gap-2 w-28 h-11 bg-[#262540] active:bg-[#262540]/80 rounded-[10px]'>
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" viewBox="0 0 256 256">
