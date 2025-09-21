@@ -15,6 +15,10 @@ interface IPdata {
 interface Data {
     current: {
         apparent_temperature: string;
+        precipitation: number;
+        relative_humidity_2m: number;
+        wind_speed_10m: number;
+        temperature_2m: number
     }
 }
 
@@ -31,7 +35,7 @@ export default function Layout() {
         })()
     }, [])
     const handelW = async (latitude: string, longitude: string) => {
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,apparent_temperature,is_day,wind_speed_10m,relative_humidity_2m,temperature_2m,wind_direction_10m&timezone=auto&temperature_unit=fahrenheit`)
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=apparent_temperature,is_day,relative_humidity_2m,wind_speed_10m,precipitation,rain,temperature_2m`)
         const data = await res.json()
         setData(data)
         console.log(data)
@@ -40,7 +44,12 @@ export default function Layout() {
         <div className='flex max-lg:flex-col gap-10 w-full pb-20'>
             <div className='w-[65%] max-lg:w-full'>
                 <MainForecast data={data} IPdata={IPdata} />
-                <DiethylForecast />
+                <DiethylForecast
+                    precipitation={data?.current?.precipitation}
+                    relative_humidity_2m={data?.current?.relative_humidity_2m}
+                    wind_speed_10m={data?.current?.wind_speed_10m}
+                    temperature_2m={data?.current.temperature_2m}
+                />
                 <DailyForecast />
             </div>
             <div className='w-[35%] max-lg:w-full'>
