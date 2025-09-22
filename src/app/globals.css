@@ -14,3 +14,29 @@ body {
 button {
   cursor: pointer;
 }
+
+/* webkit browsers (Chrome, Edge, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #2c0101;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+/* firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #02012c transparent;
+}

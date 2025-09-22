@@ -1,44 +1,49 @@
 "use client"
 import React, { useState } from 'react'
 
-export default function BtnHourlyForecast() {
+interface Props {
+    setNumDay: React.Dispatch<React.SetStateAction<Number>>
+    numDay: Number
+}
+
+export default function BtnHourlyForecast({ setNumDay, numDay }: Props) {
     const [open, setOpen] = useState(false)
 
     const menuItems = [
         {
             item: "Monday",
-            status: false
+            num: 0
         },
         {
             item: "Tuesday",
-            status: false
+            num: 1
         },
         {
             item: "Wednesday",
-            status: false
+            num: 2
         },
         {
             item: "Thursday",
-            status: false
+            num: 3
         },
         {
             item: "Friday",
-            status: false
+            num: 4
         },
         {
             item: "Saturday",
-            status: false
+            num: 5
         },
         {
             item: "Sunday",
-            status: true
+            num: 6
         }
     ]
     return (
         <div className=' relative '>
             <button onClick={() => setOpen(!open)} className='flex justify-center items-center gap-2 w-28 h-9 bg-[#3C3B5E] active:bg-[#3C3B5E]/80 rounded-[10px]'>
                 <div>
-                    <p>{menuItems.map((e)=>e.status? e.item : "")}</p>
+                    <p>{menuItems.map((e) => e.num === numDay ? e.item : "")}</p>
                 </div>
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" viewBox="0 0 256 256">
@@ -53,7 +58,7 @@ export default function BtnHourlyForecast() {
                 <ul>
                     {menuItems.map((e, index) => (
 
-                        <li key={index} className={`flex justify-between py-2 hover:bg-[#302F4A] active::bg-red-500 w-full h-fit px-3 rounded-[10px] ${e.status && `bg-[#302F4A]`} mb-1 cursor-pointer`}>{e.item} </li>
+                        <li onClick={() => { setNumDay(index); setOpen(false) }} key={index} className={`flex justify-between py-2 hover:bg-[#302F4A] active::bg-red-500 w-full h-fit px-3 rounded-[10px] ${e.num === numDay && `bg-[#302F4A]`} mb-1 cursor-pointer`}>{e.item} </li>
 
                     ))}
                 </ul>

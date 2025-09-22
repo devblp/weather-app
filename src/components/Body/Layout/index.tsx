@@ -18,7 +18,20 @@ interface Data {
         precipitation: number;
         relative_humidity_2m: number;
         wind_speed_10m: number;
-        temperature_2m: number
+        temperature_2m: number;
+        time: string;
+        weather_code: number;
+    };
+    daily: {
+        temperature_2m_max: string[];
+        temperature_2m_min: string[];
+        time: string[];
+        weather_code: string[];
+    };
+    hourly: {
+        temperature_2m: string[];
+        time: string[];
+        weather_code: string[];
     }
 }
 
@@ -35,7 +48,7 @@ export default function Layout() {
         })()
     }, [])
     const handelW = async (latitude: string, longitude: string) => {
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=apparent_temperature,is_day,relative_humidity_2m,wind_speed_10m,precipitation,rain,temperature_2m`)
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code,apparent_temperature,is_day,relative_humidity_2m,wind_speed_10m,precipitation,rain,temperature_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=weather_code,temperature_2m`)
         const data = await res.json()
         setData(data)
         console.log(data)
@@ -50,10 +63,10 @@ export default function Layout() {
                     wind_speed_10m={data?.current?.wind_speed_10m}
                     temperature_2m={data?.current.temperature_2m}
                 />
-                <DailyForecast />
+                <DailyForecast data={data} />
             </div>
             <div className='w-[35%] max-lg:w-full'>
-                <HourlyForecast />
+                <HourlyForecast data={data} />
             </div>
         </div>
     )
