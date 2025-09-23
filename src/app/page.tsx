@@ -1,16 +1,48 @@
+"use client"
 import Body from "@/components/Body";
 import Header from "@/components/Header";
 import HeaderText from "@/components/HeaderText";
+import { useState } from "react";
+
+interface Units {
+  temperature: {
+    c: boolean;
+    f: boolean;
+  };
+  windSpeed: {
+    kmh: boolean;
+    mph: boolean;
+  };
+  precipitation: {
+    mm: boolean;
+    in: boolean;
+  }
+}
 
 export default function Home() {
+  const [units, setUnits] = useState<Units>({
+    temperature: {
+      c: true,
+      f: false,
+    },
+    windSpeed: {
+      kmh: true,
+      mph: false,
+    },
+    precipitation: {
+      mm: true,
+      in: false,
+    }
+  })
+
   return (
-    <div className="flex flex-col gap-16 justify-center items-center px-28 max-lg:px-7 w-full">
+    <div className="flex flex-col gap-16 justify-center items-center px-29 max-2xl:px-20 max-lg:px-7 w-full">
       {/* Header */}
-      <Header />
+      <Header setUnits={setUnits} units={units} />
       {/* Header Text */}
-      <HeaderText/>
+      <HeaderText />
       {/* Body */}
-      <Body />
+      <Body units={units} />
     </div>
   );
 }

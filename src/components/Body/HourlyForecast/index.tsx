@@ -20,7 +20,7 @@ interface Props {
 
 export default function HourlyForecast({ data }: Props) {
   const [numDay, setNumDay] = useState<Number>(0)
-  const Hourly = data?.hourly.time.map((e, index) => {
+  const Hourly = data?.hourly?.time?.map((e, index) => {
 
     const dateDailyTime = new Date(data.daily.time[Number(numDay)]).toDateString()
     const datehourlyTime = new Date(e).toDateString()
@@ -31,7 +31,9 @@ export default function HourlyForecast({ data }: Props) {
       return <CardHourlyForecast key={index} hour={hour} temperature={temperature} code={Number(code)} />
     }
   })
-
+  const loading = Array.from({ length: 10 }).map((_, index) => (
+    <div key={index} className='flex justify-between items-center w-full h-14 bg-[#302F4A] border-[#3C3B5E] border-[1px] rounded-[10px] p-4'></div>
+  ))
   return (
     <div className='w-full h-full bg-[#262540] rounded-[20px]'>
       <div className='flex flex-col gap-3 p-6'>
@@ -43,8 +45,8 @@ export default function HourlyForecast({ data }: Props) {
             <BtnHourlyForecast setNumDay={setNumDay} numDay={numDay} />
           </div>
         </div>
-        <div className='flex flex-col gap-4 overflow-y-scroll h-[540px] custom-scrollbar'>
-          {Hourly}
+        <div className='flex flex-col gap-4 overflow-y-scroll h-[590px] custom-scrollbar'>
+          {data ? Hourly : loading}
         </div>
       </div>
     </div>

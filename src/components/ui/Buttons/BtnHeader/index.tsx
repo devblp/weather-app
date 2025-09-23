@@ -1,48 +1,96 @@
 "use client"
-import { title } from 'process'
 import React, { useState } from 'react'
 
-export default function BtnHeader() {
+interface Units {
+    temperature: {
+        c: boolean;
+        f: boolean;
+    };
+    windSpeed: {
+        kmh: boolean;
+        mph: boolean;
+    };
+    precipitation: {
+        mm: boolean;
+        in: boolean;
+    }
+}
+
+interface Props {
+    setUnits: React.Dispatch<React.SetStateAction<Units>>
+    units: Units
+}
+
+
+export default function BtnHeader({ setUnits, units }: Props) {
     const [open, setOpen] = useState(false)
 
     const menuItems = [
         {
-            title: "Temperature", items: [
+            title: "Temperature",
+            id: "temperature",
+            items: [
                 {
                     name: "Celsius (°C)",
-                    staus: false
+                    id: "c",
+                    staus: units.temperature.c
                 },
                 {
                     name: "Fahrenheit (°F)",
-                    staus: true
+                    id: "f",
+                    staus: units.temperature.f
                 }
             ]
         },
         {
-            title: "Wind Speed", items: [
+            title: "Wind Speed",
+            id: "windSpeed",
+            items: [
                 {
                     name: "km/h",
-                    staus: true
+                    id: "kmh",
+                    staus: units.windSpeed.kmh
                 },
                 {
                     name: "mph",
-                    staus: false
+                    id: "mph",
+                    staus: units.windSpeed.mph
                 }
             ]
         },
         {
-            title: "Precipitation", items: [
+            title: "Precipitation",
+            id: "precipitation",
+            items: [
                 {
                     name: "Millimeters (mm)",
-                    staus: false
+                    id: "mm",
+                    staus: units.precipitation.mm
                 },
                 {
                     name: "Inches (in)",
-                    staus: true
+                    id: "in",
+                    staus: units.precipitation.in
                 }
             ]
         }
     ]
+
+    const handleSelectUnits = (menuId: keyof Units, itemId: string) => {
+        setUnits(prv => {
+            const item = Object.keys(prv[menuId]).reduce(
+                (acc, key) => ({ ...acc, [key]: false }),
+                {}
+            )
+            return {
+                ...prv,
+                [menuId]: {
+                    ...item,
+                    [itemId]: true
+                }
+            }
+        })
+    }
 
     return (
         <div className='relative w-full h-fit z-50'>
@@ -68,12 +116,17 @@ export default function BtnHeader() {
                         ${open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-6 pointer-events-none"}`}
             >
                 <p className='font-medium'>Switch to Imperial</p>
-                {menuItems.map((e, index) => (
+                {menuItems.map((m, index) => (
                     <div className='pt-5' key={index}>
-                        <p className='font-medium text-[15px] text-[#ACACB7] pb-2'>{e.title}</p>
+                        <p className='font-medium text-[15px] text-[#ACACB7] pb-2'>{m.title}</p>
                         <ul>
-                            {e.items.map((e, index) => (
-                                <li className={`flex justify-between py-2 hover:bg-[#302F4A] active::bg-red-500 w-full h-fit px-3 rounded-[10px] ${e.staus && `bg-[#302F4A]`} mb-1 cursor-pointer`} key={index}>{e.name} {e.staus && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8f96ff" viewBox="0 0 256 256"><path d="M243.28,68.24l-24-23.56a16,16,0,0,0-22.59,0L104,136.23l-36.69-35.6a16,16,0,0,0-22.58.05l-24,24a16,16,0,0,0,0,22.61l71.62,72a16,16,0,0,0,22.63,0L243.33,90.91A16,16,0,0,0,243.28,68.24ZM103.62,208,32,136l24-24a.6.6,0,0,1,.08.08l42.35,41.09a8,8,0,0,0,11.19,0L208.06,56,232,79.6Z"></path></svg>}</li>
+                            {m.items.map((e, index) => (
+                                <li onClick={() => handleSelectUnits(m.id as keyof Units, e.id)} className={`flex justify-between py-2 hover:bg-[#302F4A] active::bg-red-500 w-full h-fit px-3 rounded-[10px] ${e.staus && `bg-[#302F4A]`} mb-1 cursor-pointer`} key={index}>
+                                    {e.name}
+                                    {e.staus && <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#8f96ff" viewBox="0 0 256 256">
+                                        <path d="M243.28,68.24l-24-23.56a16,16,0,0,0-22.59,0L104,136.23l-36.69-35.6a16,16,0,0,0-22.58.05l-24,24a16,16,0,0,0,0,22.61l71.62,72a16,16,0,0,0,22.63,0L243.33,90.91A16,16,0,0,0,243.28,68.24ZM103.62,208,32,136l24-24a.6.6,0,0,1,.08.08l42.35,41.09a8,8,0,0,0,11.19,0L208.06,56,232,79.6Z"></path>
+                                    </svg>}
+                                </li>
                             ))}
                         </ul>
                     </div>
