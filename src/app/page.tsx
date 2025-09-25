@@ -1,4 +1,5 @@
 "use client"
+import APIerror from "@/components/APIerror";
 import Body from "@/components/Body";
 import Header from "@/components/Header";
 import HeaderText from "@/components/HeaderText";
@@ -20,6 +21,7 @@ interface Units {
 }
 
 export default function Home() {
+  const [server, setServer] = useState(true)
   const [units, setUnits] = useState<Units>({
     temperature: {
       c: true,
@@ -39,10 +41,18 @@ export default function Home() {
     <div className="flex flex-col gap-16 justify-center items-center px-29 max-2xl:px-20 max-lg:px-7 w-full">
       {/* Header */}
       <Header setUnits={setUnits} units={units} />
-      {/* Header Text */}
-      <HeaderText />
-      {/* Body */}
-      <Body units={units} />
+
+      {server ? (
+        <>
+          {/* Header Text */}
+          <HeaderText />
+          {/* Body */}
+          <Body units={units} setServer={setServer} />
+        </>
+      ) : (
+        <APIerror />
+      )}
+
     </div>
   );
 }
