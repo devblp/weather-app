@@ -1,5 +1,5 @@
 import React from 'react'
-import BtnRetry from '../ui/Buttons/BtnRetry'
+import BtnRetry from '../ui/Buttons/BtnRefresh'
 
 export default function APIerror() {
     return (
