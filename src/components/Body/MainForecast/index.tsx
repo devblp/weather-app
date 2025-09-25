@@ -15,12 +15,19 @@ interface Data {
   }
 }
 
+interface CityData {
+  city: string;
+  land: string;
+}
+
 interface Props {
   data: Data | undefined;
   IPdata: IPdata | undefined;
+  loading: boolean
+  cityData: CityData | undefined
 }
 
-export default function MainForecast({ data, IPdata }: Props) {
+export default function MainForecast({ data, IPdata, loading, cityData }: Props) {
   const date = new Date(data?.current?.time || "")
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
@@ -45,13 +52,13 @@ export default function MainForecast({ data, IPdata }: Props) {
   };
 
   return (
-    <div className={`relative flex max-sm:flex-col ${data ? "justify-between" : "justify-center"} max-sm:justify-center items-center  rounded-[20px] w-full h-72 p-6`}>
+    <div className={`relative flex max-sm:flex-col ${!loading ? "justify-between" : "justify-center"} max-sm:justify-center items-center  rounded-[20px] w-full h-72 p-6`}>
       <Image src="DesktopHeroBg.svg" alt="Desktop-Hero-Bg" className='absolute w-full h-full left-0 -z-50 max-sm:hidden' width={100} height={100} />
       <Image src="MobileHeroBg.svg" alt="Desktop-Hero-Bg" className='absolute w-full h-full left-0 top-0 -z-50 hidden max-sm:flex' width={100} height={100} />
-      {data ? (
+      {!loading ? (
         <>
           <div className='flex max-sm:items-center flex-col gap-2'>
-            <p className='text-[28px] font-bold'>{IPdata?.city}, {IPdata?.country}</p>
+            <p className='text-[28px] font-bold'>{cityData ? cityData.city : IPdata?.city}, {cityData ? cityData.land : IPdata?.country}</p>
             <p className='text-[18px]'>{formatted}</p>
           </div>
           <div className='flex max-sm:items-center items-center gap-5'>
