@@ -1,7 +1,6 @@
 import React from 'react'
-import SearchBar from './SearchBar'
 import Layout from './Layout'
-// import NoResult from '../NoResult'
+
 
 interface Units {
   temperature: {
@@ -19,13 +18,9 @@ interface Units {
 }
 interface Props {
   units: Units
+  setServer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function Body({ units }: Props) {
-  return (
-    <div className='w-full'>
-      <SearchBar />
-      <Layout units={units} />
-    </div>
-  )
+export default function Body({ units, setServer }: Props) {
+  return <Layout units={units} setServer={setServer} />
 }
