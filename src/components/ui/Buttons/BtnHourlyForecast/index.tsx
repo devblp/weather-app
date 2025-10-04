@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 
 interface Props {
-    setNumDay: React.Dispatch<React.SetStateAction<Number>>
-    numDay: Number
+    numDay: number;
+    setNumDay: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function BtnHourlyForecast({ setNumDay, numDay }: Props) {

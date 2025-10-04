@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import MainForecast from '../MainForecast'
-import HourlyForecast from '../HourlyForecast'
-import DiethylForecast from '../DiethylForecast'
-import DailyForecast from '../DailyForecast'
-import SearchBar from '../SearchBar'
-// import NoResult from '@/components/NoResult'
+import React, { useEffect, useState } from "react";
+import MainForecast from "../MainForecast";
+import HourlyForecast from "../HourlyForecast";
+import DiethylForecast from "../DiethylForecast";
+import DailyForecast from "../DailyForecast";
+import SearchBar from "../SearchBar";
+
 interface IPdata {
   city: string;
   country: string;
   lat: string;
-  lon: string
+  lon: string;
 }
 
 interface Data {
@@ -33,28 +33,19 @@ interface Data {
     temperature_2m: string[];
     time: string[];
     weather_code: string[];
-  }
+  };
 }
 
 interface Units {
-  temperature: {
-    c: boolean;
-    f: boolean;
-  };
-  windSpeed: {
-    kmh: boolean;
-    mph: boolean;
-  };
-  precipitation: {
-    mm: boolean;
-    in: boolean;
-  }
+  temperature: { c: boolean; f: boolean };
+  windSpeed: { kmh: boolean; mph: boolean };
+  precipitation: { mm: boolean; in: boolean };
 }
 
 interface SearchData {
   lat: string;
   lon: string;
-  name: string;
+  name?: string;
   display_name: string;
 }
 
@@ -64,63 +55,95 @@ interface CityData {
 }
 
 interface Props {
-  units: Units
-  setServer: React.Dispatch<React.SetStateAction<boolean>>
+  units: Units;
+  setServer: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Layout({ units, setServer }: Props) {
-  const [IPdata, setIPdata] = useState<IPdata>()
-  const [data, setData] = useState<Data>()
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState("")
-  const [items, setItesm] = useState<SearchData[]>([])
-  const [cityData, setCityData] = useState<CityData | undefined>()
+  const [IPdata, setIPdata] = useState<IPdata>();
+  const [data, setData] = useState<Data>();
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [items, setItesm] = useState<SearchData[]>([]);
+  const [cityData, setCityData] = useState<CityData>();
 
+  // 🌍 Fetch location by IP
   useEffect(() => {
     (async () => {
-      const res = await fetch("http://ip-api.com/json")
-      const json = await res.json()
-      setIPdata(json)
-    })()
-  }, [])
+      try {
+        const res = await fetch("http://ip-api.com/json");
+        const json = await res.json();
+        if (res.ok) setIPdata(json);
+      } catch (error) {
+        console.error("IP fetch failed:", error);
+      }
+    })();
+  }, []);
 
+  // 🌦️ Fetch weather once we have IP data
   useEffect(() => {
-    if (!IPdata) return
-    handleWeather(IPdata.lat, IPdata.lon)
-  }, [IPdata, units])
+    if (!IPdata) return;
+    handleWeather(IPdata.lat, IPdata.lon);
+  }, [IPdata, units]);
 
+  // 🌤️ Fetch weather for a given location
   const handleWeather = async (latitude: string, longitude: string) => {
-    setLoading(true)
-    const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=is_day,weather_code,apparent_temperature,is_day,relative_humidity_2m,wind_speed_10m,precipitation,rain,temperature_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=weather_code,temperature_2m${units.windSpeed.mph ? "&wind_speed_unit=mph" : ""
-      }${units.temperature.f ? "&temperature_unit=fahrenheit" : ""}${units.precipitation.in ? "&precipitation_unit=inch" : ""
-      }`
-    )
-    const json = await res.json()
-    if (!res.ok) {
-      setServer(false)
-    }
-    setData(json)
-    setLoading(false)
-    if (items[0]) {
-      setCityData({ city: items[0].name, land: items[0]?.display_name.split(",").pop() || "" })
-    }
-  }
+    if (!latitude || !longitude) return;
+    setLoading(true);
 
-  // if(loading)return<NoResult/>
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=is_day,weather_code,apparent_temperature,relative_humidity_2m,wind_speed_10m,precipitation,temperature_2m&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=weather_code,temperature_2m${units.windSpeed.mph ? "&wind_speed_unit=mph" : ""
+        }${units.temperature.f ? "&temperature_unit=fahrenheit" : ""}${units.precipitation.in ? "&precipitation_unit=inch" : ""
+        }`;
+
+      const res = await fetch(url);
+      const json = await res.json();
+
+      if (!res.ok) {
+        setServer(false);
+        return;
+      }
+
+      setData(json);
+
+      // If search items exist, update city name
+      if (items.length > 0) {
+        const cityName =
+          items[0].name ||
+          items[0].display_name.split(",")[0].trim() ||
+          "Unknown";
+        const country =
+          items[0].display_name.split(",").pop()?.trim() || "";
+        setCityData({ city: cityName, land: country });
+      }
+    } catch (error) {
+      console.error("Weather fetch failed:", error);
+      setServer(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className='w-full'>
-      <SearchBar searche={search}
+    <div className="w-full">
+      {/* 🔍 Search bar */}
+      <SearchBar
+        searche={search}
         setSearche={setSearch}
         items={items}
         setItesm={setItesm}
         handleWeather={handleWeather}
       />
 
+      {/* 🌤️ Forecast sections */}
       <div className="flex max-lg:flex-col gap-10 w-full pb-20">
         <div className="w-[65%] max-lg:w-full">
-          <MainForecast data={data} IPdata={IPdata} loading={loading} cityData={cityData} />
+          <MainForecast
+            data={data}
+            IPdata={IPdata}
+            loading={loading}
+            cityData={cityData}
+          />
           <DiethylForecast
             precipitation={data?.current?.precipitation}
             relative_humidity_2m={data?.current?.relative_humidity_2m}
@@ -134,7 +157,14 @@ export default function Layout({ units, setServer }: Props) {
           <HourlyForecast data={data} />
         </div>
       </div>
-    </div>
 
-  )
+      {/* 🌪️ Loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 flex flex-col items-center justify-center z-50 text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+          <p className="text-lg font-medium">Fetching weather data...</p>
+        </div>
+      )}
+    </div>
+  );
 }

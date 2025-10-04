@@ -1,45 +1,132 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
 
 interface SearchData {
   lat: string;
   lon: string;
-  name: string;
+  name?: string;
   display_name: string;
 }
 
 interface Props {
   searche: string;
-  setSearche: React.Dispatch<React.SetStateAction<string>>
+  setSearche: React.Dispatch<React.SetStateAction<string>>;
   items: SearchData[];
-  setItesm: React.Dispatch<React.SetStateAction<SearchData[]>>
-  handleWeather: (latitude: string, longitude: string) => void
+  setItesm: React.Dispatch<React.SetStateAction<SearchData[]>>;
+  handleWeather: (latitude: string, longitude: string) => void;
 }
 
-export default function SearchBar({ searche, setSearche, items, setItesm, handleWeather }: Props) {
+export default function SearchBar({
+  searche,
+  setSearche,
+  items,
+  setItesm,
+  handleWeather,
+}: Props) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-
-  const handelSearch = async (searche: string) => {
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?city=${searche}&format=json&limit=5`)
-    const data = await res.json()
-    if (res.ok) {
-      setItesm(data)
-      console.log(data)
+  // 🧠 Debounce for API calls
+  useEffect(() => {
+    if (!searche.trim()) {
+      setItesm([]);
+      return;
     }
-  }
+
+    const timer = setTimeout(() => {
+      handleSearch(searche);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searche]);
+
+  // 🔍 Search function
+  const handleSearch = async (searchValue: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(
+          searchValue
+        )}&format=json&limit=5`
+      );
+
+      if (!res.ok) throw new Error("Network error");
+
+      const data = await res.json();
+      setItesm(data);
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong while searching.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className=''>
-      <div className='flex max-sm:flex-col justify-center items-center gap-4 pb-12 group'>
-        {/* box serche */}
-        <div className='relative w-2/5 max-lg:w-full'>
-          <input value={searche} onChange={(e) => { setSearche(e.target.value); handelSearch(e.target.value) }} type="text" name="" id="" placeholder='Search for a place...' className=' bg-[#262540] h-14 w-full rounded-[10px] px-10 focus:outline-none' />
-          <div className='absolute top-1/2 left-5 -translate-1/2'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" viewBox="0 0 256 256">
+    <div>
+      <div className="flex max-sm:flex-col justify-center items-center gap-4 pb-12 group">
+        {/* Search box */}
+        <div className="relative w-2/5 max-lg:w-full">
+          <input
+            value={searche}
+            onChange={(e) => setSearche(e.target.value)}
+            type="text"
+            placeholder="Search for a place..."
+            className="bg-[#262540] text-white h-14 w-full rounded-[10px] px-10 focus:outline-none"
+          />
+
+          {/* Search icon */}
+          <div className="absolute top-1/2 left-3 -translate-y-1/2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="#ffffff"
+              viewBox="0 0 256 256"
+            >
               <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
             </svg>
           </div>
-          <div className={`absolute duration-200 z-50 opacity-0 translate-y-7 group-focus-within:opacity-100 group-focus-within:translate-y-0    left-0 top-18 w-full h-fit bg-[#262540] border-[#3C3B5E] border-[1px] rounded-[14px]`}>
-            <ul>
+
+          {/* Dropdown results */}
+          <div
+            className={`absolute duration-200 z-50 opacity-0 translate-y-7 group-focus-within:opacity-100 group-focus-within:translate-y-0 left-0 top-[4.5rem] w-full h-fit bg-[#262540] border-[#3C3B5E] border-[1px] rounded-[14px] overflow-hidden`}
+          >
+            <ul className="max-h-60 overflow-y-auto">
+              {loading && (
+                <li className="py-3 text-center text-gray-300 flex justify-center items-center gap-2">
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    ></path>
+                  </svg>
+                  <span>Search in progress...</span>
+                </li>
+              )}
+              {error && (
+                <li className="py-3 text-center text-red-400">{error}</li>
+              )}
+              {!loading && !error && items?.length === 0 && searche && (
+                <li className="py-3 text-center text-gray-400">
+                  No results found.
+                </li>
+              )}
               {items?.map((e, index) => {
                 const parts = e.display_name.split(",");
                 const city = parts[0]?.trim();
@@ -47,7 +134,7 @@ export default function SearchBar({ searche, setSearche, items, setItesm, handle
                 return (
                   <li
                     onClick={() => handleWeather(e.lat, e.lon)}
-                    className="flex justify-between py-2 hover:bg-[#302F4A] w-full h-fit px-3 rounded-[10px] cursor-pointer"
+                    className="flex justify-between py-2 hover:bg-[#302F4A] w-full px-3 rounded-[10px] cursor-pointer transition-all"
                     key={index}
                   >
                     {city} – {country}
@@ -57,15 +144,22 @@ export default function SearchBar({ searche, setSearche, items, setItesm, handle
             </ul>
           </div>
         </div>
-        {/* serch btn */}
-        <div className='max-sm:w-full'>
-          <button onClick={() => handleWeather(items[0].lat, items[0].lon)} type="submit" className='bg-[#4658D9] w-24 max-sm:w-full h-14 rounded-[10px] active:bg-[#4658D9]/50 text-[15px]'>
+
+        {/* Search button */}
+        <div className="max-sm:w-full">
+          <button
+            onClick={() => {
+              if (items.length > 0) {
+                handleWeather(items[0].lat, items[0].lon);
+              }
+            }}
+            type="submit"
+            className="bg-[#4658D9] w-24 max-sm:w-full h-14 rounded-[10px] active:bg-[#4658D9]/50 text-[15px] text-white transition-all"
+          >
             Search
           </button>
         </div>
-
       </div>
-
     </div>
-  )
+  );
 }
