@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
-const repoName = "/weather-app"; 
-
 const nextConfig: NextConfig = {
-  basePath: repoName,
-  assetPrefix: repoName,
-  reactStrictMode: true,
-  output: "export", 
+  /* config options here */
 };
 
 export default nextConfig;
