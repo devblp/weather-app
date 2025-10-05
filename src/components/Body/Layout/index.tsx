@@ -7,9 +7,9 @@ import SearchBar from "../SearchBar";
 
 interface IPdata {
   city: string;
-  country: string;
-  lat: string;
-  lon: string;
+  country_name: string;
+  latitude: string;
+  longitude: string;
 }
 
 interface Data {
@@ -71,7 +71,7 @@ export default function Layout({ units, setServer }: Props) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://ip-api.com/json");
+        const res = await fetch("https://ipapi.co/json");
         const json = await res.json();
         if (res.ok) setIPdata(json);
       } catch (error) {
@@ -83,7 +83,7 @@ export default function Layout({ units, setServer }: Props) {
   // 🌦️ Fetch weather once we have IP data
   useEffect(() => {
     if (!IPdata) return;
-    handleWeather(IPdata.lat, IPdata.lon);
+    handleWeather(IPdata.latitude, IPdata.longitude);
   }, [IPdata, units]);
 
   // 🌤️ Fetch weather for a given location

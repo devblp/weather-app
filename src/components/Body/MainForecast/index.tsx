@@ -3,7 +3,9 @@ import React from "react";
 
 interface IPdata {
   city: string;
-  country: string;
+  country_name: string;
+  latitude: string;
+  longitude: string;
 }
 
 interface Data {
@@ -55,7 +57,7 @@ export default function MainForecast({ data, IPdata, loading, cityData }: Props)
 
   const weatherIcon = weatherIcons[data?.current?.weather_code || 0] || "Sunny.png";
   const cityName = cityData?.city || IPdata?.city || "_";
-  const countryName = cityData?.land || IPdata?.country || "_";
+  const countryName = cityData?.land || IPdata?.country_name || "_";
   const temperature = data?.current?.apparent_temperature
     ? `${Math.floor(Number(data.current.apparent_temperature))}°`
     : "_";
